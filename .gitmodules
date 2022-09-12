@@ -1,0 +1,3 @@
+[submodule "rgb-lib"]
+	path = rgb-lib
+	url = https://github.com/RGB-Tools/rgb-lib.git

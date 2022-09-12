@@ -1,0 +1,29 @@
+[tool.poetry]
+name = 'rgb-lib'
+version = '0.0.1'
+description = 'RGB Lib Python language bindings.'
+license = 'MIT'
+authors = ['Zoe Faltibà <zoefaltiba@gmail.com>', 'Nicola Busanello <nicola.busanello@gmail.com>']
+readme = 'README.md'
+homepage = 'https://github.com/RGB-Tools/rgb-lib-python'
+repository = 'https://github.com/RGB-Tools/rgb-lib-python'
+documentation = 'https://github.com/RGB-Tools/rgb-lib-python'
+keywords = ['rgb', 'bitcoin']
+classifiers = [
+    'Development Status :: 4 - Beta',
+    'Intended Audience :: Developers',
+    'Natural Language :: English',
+    'Operating System :: MacOS',
+    'Operating System :: POSIX :: Linux',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Topic :: Other/Nonlisted Topic',
+]
+include = ["rgb_lib/_rgb_lib/*"]
+
+[tool.poetry.dependencies]
+python = "^3.9.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
