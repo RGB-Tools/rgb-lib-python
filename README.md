@@ -35,6 +35,20 @@ pip install ./dist/rgb_lib-<version>-py3-none-any.whl
 pip install ./dist/rgb-lib-<version>.tar.gz
 ```
 
+## Publish
+
+Publishing to PyPI is handled with Poetry.
+
+To configure the access token, which only needs to be done once, run:
+```shell
+poetry config pypi-token.pypi <token>
+```
+
+To publish a new release run:
+```shell
+poetry publish
+```
+
 
 [cargo]: https://github.com/rust-lang/cargo
 [rgb-lib]: https://github.com/RGB-Tools/rgb-lib
