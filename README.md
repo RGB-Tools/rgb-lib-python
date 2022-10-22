@@ -11,6 +11,12 @@ Install the [latest release] by running:
 pip install rgb-lib
 ```
 
+## Demo
+
+The `demo/` directory contains a demonstration of the most common operations in
+the form of a Jupyter notebook. See the included `README.md` file for more
+details.
+
 ## Install locally
 
 ### Requirements
