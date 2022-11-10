@@ -5,11 +5,11 @@ services:
     image: registry.gitlab.com/hashbeam/docker/bitcoind:23.0
     command: "-fallbackfee=0.0002"
     volumes:
-      - ./data/srv/bitcoin:/srv/app/.bitcoin
+      - ./data/bitcoin:/srv/app/.bitcoin
   electrs:
     image: registry.gitlab.com/hashbeam/docker/electrs:0.9.9
     volumes:
-      - ./data/srv/electrs:/srv/app/db
+      - ./data/electrs:/srv/app/db
     depends_on:
       - bitcoind
   jupyter:

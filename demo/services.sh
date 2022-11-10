@@ -15,6 +15,7 @@ else
     _die "could not locate docker compose command or plugin"
 fi
 BCLI="$COMPOSE exec -T -u blits bitcoind bitcoin-cli -regtest"
+DATA_DIR="data"
 
 build() {
     $COMPOSE build jupyter
@@ -22,6 +23,8 @@ build() {
 
 start() {
     $COMPOSE down -v
+    rm -fr $DATA_DIR
+    mkdir -p $DATA_DIR
     $COMPOSE up -d
 
     # wait for bitcoind to be up
@@ -55,6 +58,7 @@ start() {
 
 stop() {
     $COMPOSE down -v
+    rm -fr $DATA_DIR
 }
 
 fund() {
