@@ -1,0 +1,11 @@
+**/__pycache__
+/.dockerignore
+/.gitignore
+/.git/
+/demo/
+/dist/
+/rgb-lib/
+/rgb_lib/_rgb_lib/librgblibffi.so
+/rgb_lib/_rgb_lib/rgb_lib.py
+/build.sh
+/poetry.lock

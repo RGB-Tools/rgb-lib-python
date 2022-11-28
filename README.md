@@ -41,6 +41,21 @@ pip install ./dist/rgb_lib-<version>-py3-none-any.whl
 pip install ./dist/rgb-lib-<version>.tar.gz
 ```
 
+## Build in Docker
+In order to build the project in a Docker container, run:
+```shell
+# Update the submodule
+git submodule update --init
+
+# run the build script
+./build_in_docker.sh
+```
+
+The `build_in_docker.sh` script will build the docker image and use it to first
+generate the bindings, then build the source and wheel archives. Once the build
+completes, archives will be available in the `dist/` directory as if they were
+built locally.
+
 ## Publish
 
 Publishing to PyPI is handled with Poetry.
