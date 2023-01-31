@@ -1,4 +1,4 @@
-FROM rust:1.65-slim-bullseye
+FROM rust:1.67-slim-bullseye
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -13,7 +13,7 @@ RUN adduser --home ${APP_DIR} --shell /bin/bash --disabled-login \
 
 WORKDIR $APP_DIR
 RUN mkdir -p rgb_lib/_rgb_lib
-COPY --chown=$USER:$USER generate.sh pyproject.toml ./
+COPY --chown=$USER:$USER generate.sh pyproject.toml README.md ./
 COPY --chown=$USER:$USER rgb_lib/__init__.py ./rgb_lib/
 COPY --chown=$USER:$USER rgb_lib/_rgb_lib/__init__.py ./rgb_lib/_rgb_lib/
 COPY entrypoint.sh /usr/local/bin/
