@@ -2,7 +2,7 @@ version: '3.2'
 
 services:
   bitcoind:
-    image: registry.gitlab.com/hashbeam/docker/bitcoind:23.0
+    image: registry.gitlab.com/hashbeam/docker/bitcoind:24.0
     command: "-fallbackfee=0.0002"
     volumes:
       - ./data/bitcoin:/srv/app/.bitcoin

@@ -71,11 +71,11 @@ fund() {
     local address="$1"
     [ -n "$1" ] || _die "destination address required"
     $BCLI -rpcwallet=miner sendtoaddress "$address" 1
-    mine 3
+    mine
 }
 
 mine() {
-    local blocks=3
+    local blocks=1
     [ -n "$1" ] && blocks="$1"
     $BCLI -rpcwallet=miner -generate "$blocks"
 }
