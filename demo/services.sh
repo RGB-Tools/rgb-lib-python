@@ -41,6 +41,12 @@ start() {
         sleep 1
     done
 
+    # wait for proxy to have completed startup
+    until $COMPOSE logs proxy |grep -q 'App is running at http://localhost:3000'; do
+        sleep 1
+    done
+
+
     # wait for jupyter to have completed startup
     local jupyter_str='http://127.0.0.1:8888/lab?token='
     until $COMPOSE logs jupyter |grep -q "$jupyter_str"; do

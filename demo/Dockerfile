@@ -14,6 +14,6 @@ USER $USER
 RUN python3 -m pip install --no-warn-script-location \
     jupyterlab matplotlib python-magic qrcode rgb-lib==0.1.2
 
-COPY rgb-lib.ipynb sample.png ./
+COPY --chown=$USER:$USER rgb-lib.ipynb sample.png ./
 
 CMD ["/home/jupyter/.local/bin/jupyter-lab", "--ip=0.0.0.0"]
