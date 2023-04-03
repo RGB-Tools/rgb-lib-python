@@ -13,6 +13,6 @@ cargo build "${MANIFEST_PATH[@]}"
 cp "$RGBLIBFFI_PATH/target/debug/librgblibffi.so" "$PY_SRC/"
 
 echo "Generating rgb_lib.py..."
-RGBFFI_BINDGEN_OUTPUT_DIR="$PY_SRC" cargo run "${MANIFEST_PATH[@]}" \
-    --package rgb-lib-ffi-bindgen -- \
-    --language python --udl-file $RGBLIBFFI_PATH/src/rgb-lib.udl
+cargo run "${MANIFEST_PATH[@]}" \
+    --bin rgb-lib-ffi-bindgen generate $RGBLIBFFI_PATH/src/rgb-lib.udl \
+    --out-dir $PY_SRC --language python --no-format
