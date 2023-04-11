@@ -7,12 +7,9 @@ _die() {
 }
 
 
-if which docker-compose >/dev/null; then
-    COMPOSE="docker-compose"
-elif docker compose >/dev/null; then
-    COMPOSE="docker compose"
-else
-    _die "could not locate docker compose command or plugin"
+COMPOSE="docker compose"
+if ! $COMPOSE >/dev/null; then
+    _die "could not call docker compose (hint: install docker compose plugin)"
 fi
 BCLI="$COMPOSE exec -T -u blits bitcoind bitcoin-cli -regtest"
 DATA_DIR="data"
