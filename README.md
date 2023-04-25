@@ -21,7 +21,7 @@ details.
 
 ### Requirements
 - [cargo]
-- [poetry]
+- [poetry] 1.4+
 
 In order to install the project locally, run:
 ```shell
@@ -34,11 +34,11 @@ git submodule update --init
 # Build the source and wheels archives
 poetry build
 
-# Install the wheel
+# Install the wheel (replacing <version> with built version)
 pip install ./dist/rgb_lib-<version>-py3-none-any.whl
 
-# or install the sdist
-pip install ./dist/rgb-lib-<version>.tar.gz
+# or install the sdist (replacing <version> with built version)
+pip install ./dist/rgb_lib-<version>.tar.gz
 ```
 
 ## Build in Docker
