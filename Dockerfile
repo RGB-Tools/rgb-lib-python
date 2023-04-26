@@ -12,10 +12,12 @@ RUN adduser --home ${APP_DIR} --shell /bin/bash --disabled-login \
         --gecos "${USER} user" ${USER}
 
 WORKDIR $APP_DIR
-RUN mkdir -p rgb_lib/_rgb_lib
+ENV PY_SRC="src/rgb_lib"
+ENV PY_SRC_INT="$PY_SRC/_rgb_lib"
+RUN mkdir -p $PY_SRC_INT
 COPY --chown=$USER:$USER generate.sh pyproject.toml README.md ./
-COPY --chown=$USER:$USER rgb_lib/__init__.py ./rgb_lib/
-COPY --chown=$USER:$USER rgb_lib/_rgb_lib/__init__.py ./rgb_lib/_rgb_lib/
+COPY --chown=$USER:$USER $PY_SRC/__init__.py ./$PY_SRC/
+COPY --chown=$USER:$USER $PY_SRC_INT/__init__.py ./$PY_SRC_INT/
 COPY entrypoint.sh /usr/local/bin/
 
 RUN chmod +x /usr/local/bin/entrypoint.sh

@@ -3,7 +3,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(dirname "$(realpath "$0")")"
-PY_SRC="${SCRIPT_DIR}/rgb_lib/_rgb_lib/"
+PY_SRC="${SCRIPT_DIR}/src/rgb_lib/_rgb_lib/"
 
 RGBLIBFFI_PATH="./rgb-lib/rgb-lib-ffi"
 MANIFEST_PATH=(--manifest-path "$RGBLIBFFI_PATH/Cargo.toml")
