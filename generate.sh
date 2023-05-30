@@ -10,7 +10,7 @@ MANIFEST_PATH=(--manifest-path "$RGBLIBFFI_PATH/Cargo.toml")
 
 echo "Generating librgblibffi.so..."
 cargo build --release "${MANIFEST_PATH[@]}"
-cp "$RGBLIBFFI_PATH/target/debug/librgblibffi.so" "$PY_SRC/"
+cp "$RGBLIBFFI_PATH/target/release/librgblibffi.so" "$PY_SRC/"
 
 echo "Generating rgb_lib.py..."
 cargo run --release "${MANIFEST_PATH[@]}" \
