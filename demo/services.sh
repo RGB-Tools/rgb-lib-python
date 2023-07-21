@@ -22,6 +22,13 @@ start() {
     $COMPOSE down -v
     rm -fr $DATA_DIR
     mkdir -p $DATA_DIR
+    # see docker-compose.yml for the exposed ports
+    EXPOSED_PORTS=(3000 8888)
+    for port in "${EXPOSED_PORTS[@]}"; do
+        if [ -n "$(ss -HOlnt "sport = :$port")" ];then
+            _die "port $port is already bound, services can't be started"
+        fi
+    done
     $COMPOSE up -d
 
     # wait for bitcoind to be up
