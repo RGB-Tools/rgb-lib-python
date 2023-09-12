@@ -1,4 +1,4 @@
-FROM rust:1.71-slim-bullseye
+FROM rust:1.72-slim-bullseye
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
