@@ -2,18 +2,18 @@ version: '3.2'
 
 services:
   bitcoind:
-    image: registry.gitlab.com/hashbeam/docker/bitcoind:24.0
+    image: registry.gitlab.com/hashbeam/docker/bitcoind:25.0
     command: "-fallbackfee=0.0002"
     volumes:
       - ./data/bitcoin:/srv/app/.bitcoin
   electrs:
-    image: registry.gitlab.com/hashbeam/docker/electrs:0.9.9
+    image: registry.gitlab.com/hashbeam/docker/electrs:0.9.14
     volumes:
       - ./data/electrs:/srv/app/db
     depends_on:
       - bitcoind
   proxy:
-    image: ghcr.io/grunch/rgb-proxy-server:0.1.0
+    image: ghcr.io/grunch/rgb-proxy-server:0.2.0
     ports:
       - 3000:3000
   jupyter:
