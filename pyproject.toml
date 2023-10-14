@@ -1,6 +1,6 @@
 [tool.poetry]
 name = 'rgb-lib'
-version = '0.2.0a5'
+version = '0.2.0a6'
 description = 'RGB Lib Python language bindings.'
 license = 'MIT'
 authors = ['Zoe Faltibà <zoefaltiba@gmail.com>', 'Nicola Busanello <nicola.busanello@gmail.com>']
