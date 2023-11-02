@@ -1,7 +1,7 @@
 FROM debian:bullseye
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends libmagic1 python3-pip \
+    && apt-get install -y --no-install-recommends libmagic1 python3-pip gcc python3-dev\
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ENV USER="jupyter"
