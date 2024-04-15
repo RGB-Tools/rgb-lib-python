@@ -23,7 +23,7 @@ console with:
 ```
 and a regtest block can be mined with:
 ```shell
-./services.sh mine <number_of_blocks>
+./services.sh mine
 ```
 
 Executing each code cell in the notebook from top to bottom reproduces an
