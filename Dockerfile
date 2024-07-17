@@ -1,13 +1,13 @@
-FROM rust:1.79-slim-bullseye
+FROM rust:1.81-slim-bookworm
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        build-essential curl git gosu libssl-dev pkg-config python3-pip \
+        build-essential curl git gosu pkg-config python3-pip \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+ENV APP_DIR="/opt/rgb-lib-python" USER="rgb" PIP_BREAK_SYSTEM_PACKAGES=1
+
 RUN python3 -m pip install 'poetry~=1.4'
-
-ENV APP_DIR="/opt/rgb-lib-python" USER="rgb"
-
 RUN adduser --home ${APP_DIR} --shell /bin/bash --disabled-login \
         --gecos "${USER} user" ${USER}
 
