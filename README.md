@@ -2,7 +2,7 @@
 
 This project builds a Python library, `rgb-lib`, for the [rgb-lib]
 Rust library, which is included as a git submodule. The bindings are created by
-the [rgb-lib-ffi] project, which is located inside the rgb-lib submodule.
+the [rgb-lib-uniffi] project, which is located inside the rgb-lib submodule.
 
 ## Install from PyPI
 
@@ -73,6 +73,6 @@ poetry publish
 
 [cargo]: https://github.com/rust-lang/cargo
 [rgb-lib]: https://github.com/RGB-Tools/rgb-lib
-[rgb-lib-ffi]: https://github.com/RGB-Tools/rgb-lib/tree/master/rgb-lib-ffi
+[rgb-lib-uniffi]: https://github.com/RGB-Tools/rgb-lib/tree/master/bindings/uniffi
 [latest release]: https://pypi.org/project/rgb-lib/
 [poetry]: https://github.com/python-poetry/poetry

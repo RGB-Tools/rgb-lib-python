@@ -5,7 +5,7 @@
 /demo/
 /dist/
 /rgb-lib/
-/src/rgb_lib/_rgb_lib/librgblibffi.so
+/src/rgb_lib/_rgb_lib/librgblibuniffi.so
 /src/rgb_lib/_rgb_lib/rgb_lib.py
 /build.sh
 /poetry.lock
