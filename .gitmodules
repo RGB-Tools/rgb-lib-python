@@ -1,3 +1,6 @@
 [submodule "rgb-lib"]
 	path = rgb-lib
 	url = https://github.com/RGB-Tools/rgb-lib.git
+[submodule "cross"]
+	path = cross
+	url = https://github.com/cross-rs/cross

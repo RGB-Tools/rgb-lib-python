@@ -1,29 +1,97 @@
-[tool.poetry]
-name = 'rgb-lib'
-version = '0.3.0a11'
-description = 'RGB Lib Python language bindings.'
-license = 'MIT'
-authors = ['Zoe Faltibà <zoefaltiba@gmail.com>', 'Nicola Busanello <nicola.busanello@gmail.com>']
-readme = 'README.md'
-homepage = 'https://github.com/RGB-Tools/rgb-lib-python'
-repository = 'https://github.com/RGB-Tools/rgb-lib-python'
-documentation = 'https://github.com/RGB-Tools/rgb-lib-python'
-keywords = ['rgb', 'bitcoin']
-classifiers = [
-    'Development Status :: 4 - Beta',
-    'Intended Audience :: Developers',
-    'Natural Language :: English',
-    'Operating System :: MacOS',
-    'Operating System :: POSIX :: Linux',
-    'Programming Language :: Python :: 3.9',
-    'Programming Language :: Python :: 3.10',
-    'Topic :: Other/Nonlisted Topic',
+[project]
+name = "rgb-lib"
+version = "0.3.0a11"
+description = "RGB Lib Python language bindings."
+authors = [
+  { name = "Zoe Faltibà", email = "zoefaltiba@gmail.com" },
+  { name = "Nicola Busanello", email = "nicola.busanello@gmail.com" },
 ]
-include = ["src/rgb_lib/_rgb_lib/*"]
+readme = "README.md"
+keywords = ["rgb", "bitcoin"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  "Operating System :: MacOS",
+  "Operating System :: POSIX :: Linux",
+  "Operating System :: Microsoft :: Windows",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Other/Nonlisted Topic",
+]
+requires-python = ">=3.9.0"
 
-[tool.poetry.dependencies]
-python = "^3.9.0"
+[project.urls]
+homepage = "https://github.com/RGB-Tools/rgb-lib-python"
+documentation = "https://github.com/RGB-Tools/rgb-lib-python"
+repository = "https://github.com/RGB-Tools/rgb-lib-python"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = [
+  "poetry-core~=2.0.0",
+]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+build = "build.py"
+packages = [{ include = "rgb_lib" }]
+include = [
+  # python package
+  { path = "rgb_lib/*rgblibuniffi.*", format = "wheel" },
+  { path = "rgb_lib/rgb_lib.py", format = "wheel" },
+  # cross
+  { path = "cross/**/Cargo.*", format = "sdist" },
+  { path = "cross/.cargo", format = "sdist" },
+  { path = "cross/docker/*.aarch64-unknown-linux-gnu", format = "sdist" },
+  { path = "cross/docker/*.x86_64-pc-windows-gnu", format = "sdist" },
+  { path = "cross/docker/*.x86_64-unknown-linux-gnu", format = "sdist" },
+  { path = "cross/docker/*linux*.sh", format = "sdist" },
+  { path = "cross/docker/*linux-runner*", format = "sdist" },
+  { path = "cross/docker/*native*", format = "sdist" },
+  { path = "cross/docker/base*.sh", format = "sdist" },
+  { path = "cross/docker/c*.sh", format = "sdist" },
+  { path = "cross/docker/cross-toolchains/docker/*.aarch64-apple-darwin-cross", format = "sdist" },
+  { path = "cross/docker/cross-toolchains/docker/*.x86_64-apple-darwin-cross", format = "sdist" },
+  { path = "cross/docker/cross-toolchains/docker/darwin*", format = "sdist" },
+  { path = "cross/docker/deny*.sh", format = "sdist" },
+  { path = "cross/docker/drop*.sh", format = "sdist" },
+  { path = "cross/docker/lib.sh", format = "sdist" },
+  { path = "cross/docker/qemu.sh", format = "sdist" },
+  { path = "cross/docker/win*.sh", format = "sdist" },
+  { path = "cross/docker/xargo.sh", format = "sdist" },
+  { path = "cross/src", format = "sdist" },
+  { path = "cross/xtask", format = "sdist" },
+  # rgb-lib rust library
+  { path = "rgb-lib/Cargo.*", format = "sdist" },
+  { path = "rgb-lib/LICENSE", format = "sdist" },
+  { path = "rgb-lib/README.md", format = "sdist" },
+  { path = "rgb-lib/bindings/README.md", format = "sdist" },
+  { path = "rgb-lib/bindings/uniffi/*.rs", format = "sdist" },
+  { path = "rgb-lib/bindings/uniffi/*.toml", format = "sdist" },
+  { path = "rgb-lib/bindings/uniffi/Cargo.lock", format = "sdist" },
+  { path = "rgb-lib/bindings/uniffi/README.md", format = "sdist" },
+  { path = "rgb-lib/bindings/uniffi/src/", format = "sdist" },
+  { path = "rgb-lib/migration/", format = "sdist" },
+  { path = "rgb-lib/src/*.rs", format = "sdist" },
+  { path = "rgb-lib/src/api/", format = "sdist" },
+  { path = "rgb-lib/src/database/", format = "sdist" },
+  { path = "rgb-lib/src/wallet/*.rs", format = "sdist" },
+]
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+flake8 = "^7.1.2"
+pylint = "^3.3.4"
+wheel = "^0.45.1"
+
+[project.scripts]
+build-packages = "build_packages:main"
+setup-cross = "build_packages:reset_cross"
+
+[tool.black]
+line_length = 100
+target_version = ["py39", "py310", "py311", "py312", "py313"]

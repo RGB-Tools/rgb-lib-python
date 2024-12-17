@@ -1,15 +1,18 @@
 ## Requirements
+
 Docker and docker compose are required to run this demo.
 
-
 ## Jupyter demo
+
 Build the jupyter docker image with:
-```shell
+
+```sh
 ./services.sh build
 ```
 
 Start regtest blockchain services along with jupyter with:
-```shell
+
+```sh
 ./services.sh start
 ```
 
@@ -18,11 +21,14 @@ in a web browser.
 
 Once services are running, a regtest bitcoin address can be funded from the
 console with:
-```shell
+
+```sh
 ./services.sh fund <bitcoin_address>
 ```
+
 and a regtest block can be mined with:
-```shell
+
+```sh
 ./services.sh mine
 ```
 
@@ -33,12 +39,14 @@ sender and receiver roles.
 Once done with the example, close the jupyter browser page and stop all
 services (this will also delete all data produced by services and the demo)
 with:
-```shell
+
+```sh
 ./services.sh stop
 ```
 
 The jupyter docker image that has been built will not be removed automatically,
 it can be deleted with:
-```shell
+
+```sh
 docker image rm rgb-lib-python-demo
 ```

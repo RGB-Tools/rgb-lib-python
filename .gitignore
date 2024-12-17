@@ -1,5 +1,6 @@
-**/__pycache__
+**/.vim/
+**/__pycache__/
 /dist/
 /poetry.lock
-/src/rgb_lib/_rgb_lib/librgblibuniffi.so
-/src/rgb_lib/_rgb_lib/rgb_lib.py
+/rgb_lib/*rgblibuniffi.*
+/rgb_lib/rgb_lib.py

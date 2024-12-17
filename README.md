@@ -1,14 +1,41 @@
 # RGB Lib Python bindings
 
-This project builds a Python library, `rgb-lib`, for the [rgb-lib]
-Rust library, which is included as a git submodule. The bindings are created by
-the [rgb-lib-uniffi] project, which is located inside the rgb-lib submodule.
+Python bindings for the [rgb-lib] Rust library.
 
-## Install from PyPI
+## Installation
 
-Install the [latest release] by running:
-```shell
+### From PyPI (wheel)
+
+Install the [latest stable release] from PyPI by running:
+
+```sh
 pip install rgb-lib
+```
+
+### From source distribution (sdist)
+
+Installation from source distribution (tested on Linux) has the following
+requirements:
+
+- [docker]
+- [cargo]
+- [cross]
+- cc
+
+The process is quite long and requires several GB of disk space, due to the
+builds of the required Docker image and the rgb-lib rust library.
+
+## Usage
+
+Once installed, you can import the `rgb_lib` module and call its APIs.
+
+As an example:
+
+```python
+import rgb_lib
+
+keys = rgb_lib.generate_keys(rgb_lib.BitcoinNetwork.REGTEST)
+print(keys.account_xpub)
 ```
 
 ## Demo
@@ -17,62 +44,8 @@ The `demo/` directory contains a demonstration of the most common operations in
 the form of a Jupyter notebook. See the included `README.md` file for more
 details.
 
-## Install locally
-
-### Requirements
-- [cargo]
-- [poetry] 1.4+
-
-In order to install the project locally, run:
-```shell
-# Update the submodule
-git submodule update --init
-
-# Generate the bindings
-./generate.sh
-
-# Build the source and wheels archives
-poetry build
-
-# Install the wheel (replacing <version> with built version)
-pip install ./dist/rgb_lib-<version>-py3-none-any.whl
-
-# or install the sdist (replacing <version> with built version)
-pip install ./dist/rgb_lib-<version>.tar.gz
-```
-
-## Build in Docker
-In order to build the project in a Docker container, run:
-```shell
-# Update the submodule
-git submodule update --init
-
-# run the build script
-./build_in_docker.sh
-```
-
-The `build_in_docker.sh` script will build the docker image and use it to first
-generate the bindings, then build the source and wheel archives. Once the build
-completes, archives will be available in the `dist/` directory as if they were
-built locally.
-
-## Publish
-
-Publishing to PyPI is handled with Poetry.
-
-To configure the access token, which only needs to be done once, run:
-```shell
-poetry config pypi-token.pypi <token>
-```
-
-To publish a new release run:
-```shell
-poetry publish
-```
-
-
 [cargo]: https://github.com/rust-lang/cargo
-[rgb-lib]: https://github.com/RGB-Tools/rgb-lib
+[docker]: https://docs.docker.com/engine/install/
+[latest stable release]: https://pypi.org/project/rgb-lib/
 [rgb-lib-uniffi]: https://github.com/RGB-Tools/rgb-lib/tree/master/bindings/uniffi
-[latest release]: https://pypi.org/project/rgb-lib/
-[poetry]: https://github.com/python-poetry/poetry
+[rgb-lib]: https://github.com/RGB-Tools/rgb-lib
