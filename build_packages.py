@@ -79,7 +79,7 @@ def patch_cross_files():
     # patch linux-image.sh for updated ubuntu
     files = ["cross/docker/linux-image.sh"]
     substitutions = [
-        (r"kversion=5.10.0-26", r"kversion=6.1.0-29"),
+        (r"kversion=5.10.0-26", r"kversion=6.1.0-37"),
         (r"bullseye", r"bookworm"),
         (r"archive-key-{7.0,8,9,10,11}", r"archive-key-12"),
         (r"release-{7,8,9,10,11}", r"release-12"),
