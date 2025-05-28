@@ -12,7 +12,6 @@ if ! $COMPOSE >/dev/null; then
     _die "could not call docker compose (hint: install docker compose plugin)"
 fi
 BCLI="$COMPOSE exec -T -u blits bitcoind bitcoin-cli -regtest"
-DATA_DIR="data"
 
 build() {
     $COMPOSE build jupyter
@@ -20,8 +19,6 @@ build() {
 
 start() {
     $COMPOSE down -v
-    rm -fr $DATA_DIR
-    mkdir -p $DATA_DIR
     # see docker-compose.yml for the exposed ports
     EXPOSED_PORTS=(3000 8888)
     for port in "${EXPOSED_PORTS[@]}"; do
@@ -68,7 +65,6 @@ start() {
 
 stop() {
     $COMPOSE down -v
-    rm -fr $DATA_DIR
 }
 
 fund() {
