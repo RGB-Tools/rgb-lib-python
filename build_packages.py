@@ -86,17 +86,12 @@ def patch_cross_files():
         (r"archive_{2020,2021,2022,2023,2024}", r"archive_2025"),
     ]
     patch_files(files, substitutions)
-    # FIXME: temporarily disabled in favor of custom wine.sh file
     # patch wine version for updated ubuntu
-    # files = ["cross/docker/wine.sh"]
-    # substitutions = [
-    #     (r'version="9.0.0.0~focal-1"', r'version="10.0.0.0~jammy-1"'),
-    #     (r"focal", r"jammy"),
-    # ]
-    # use custom wine.sh file for updated ubuntu + tmp winehq APT repo fix
-    src = Path("wine.sh")
-    dst = Path("cross/docker/wine.sh")
-    copy(src, dst)
+    files = ["cross/docker/wine.sh"]
+    substitutions = [
+        (r'version="9.0.0.0~focal-1"', r'version="10.0.0.0~jammy-1"'),
+        (r"focal", r"jammy"),
+    ]
     patch_files(files, substitutions)
     # patch darwin scripts
     files = ["cross/docker/cross-toolchains/docker/darwin.sh"]
