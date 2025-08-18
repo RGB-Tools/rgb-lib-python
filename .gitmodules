@@ -3,4 +3,4 @@
 	url = https://github.com/RGB-Tools/rgb-lib.git
 [submodule "cross"]
 	path = cross
-	url = https://github.com/cross-rs/cross
+	url = https://github.com/nicbus/cross

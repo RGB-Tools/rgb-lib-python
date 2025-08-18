@@ -11,7 +11,7 @@ from tomllib import load
 
 from build import OSX_VERSION, PLATFORMS, PYTHON_LIB_DIR, UNIFFI_DIR, get_lib_name
 
-CROSS_COMMIT = "4090bec"
+CROSS_COMMIT = "43a1220"
 CROSS_TOOLCHAIN_COMMIT = "d139724"
 OUTPUT_DIR = Path("dist")
 
