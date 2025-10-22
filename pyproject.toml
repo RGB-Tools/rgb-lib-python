@@ -1,6 +1,6 @@
 [project]
 name = "rgb-lib"
-version = "0.3.0b2"
+version = "0.3.0b3"
 description = "RGB Lib Python language bindings."
 authors = [
   { name = "Zoe Faltibà", email = "zoefaltiba@gmail.com" },
