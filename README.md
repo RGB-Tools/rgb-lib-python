@@ -45,6 +45,7 @@ the form of a Jupyter notebook. See the included `README.md` file for more
 details.
 
 [cargo]: https://github.com/rust-lang/cargo
+[cross]: https://github.com/cross-rs/cross
 [docker]: https://docs.docker.com/engine/install/
 [latest stable release]: https://pypi.org/project/rgb-lib/
 [rgb-lib-uniffi]: https://github.com/RGB-Tools/rgb-lib/tree/master/bindings/uniffi
