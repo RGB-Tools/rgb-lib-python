@@ -1,7 +1,8 @@
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends libmagic1 python3-pip gcc python3-dev \
+    && apt-get install -y --no-install-recommends \
+        adduser libmagic1 python3-pip gcc python3-dev \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ENV USER="jupyter" PIP_BREAK_SYSTEM_PACKAGES=1
