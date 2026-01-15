@@ -29,17 +29,11 @@ out in Docker, using [cross].
 
 ### Local project
 
-In order to build or install the project on the local machine, cross needs to
+In order to build or install the project on the local machine, `cross` needs to
 be properly configured first. To do so, run:
 
 ```sh
 poetry run python -c 'import build_packages; build_packages.setup_cross()'
-```
-
-or, if the project has already been installed (see below):
-
-```sh
-poetry run setup-cross
 ```
 
 The package can then be built with:
@@ -54,32 +48,29 @@ or installed with:
 poetry install
 ```
 
-Once the package has been installed, the following scripts are available to
-ease development:
-
-- build-packages (builds all the packages, see the [packages] section)
-- setup-cross (configure cross to build project/packages)
-
 ### Packages
 
-In order to build all the packages for the project, one wheel per supported
-platform plus the sdist, if the project has already been installed run:
+The project build system produces wheels (`.whl` files) for each supported
+platform, plus the source distrubution (sdist, `.tar.gz` files).
+
+First, the development dependencies need to be installed:
 
 ```sh
-poetry run build-packages
+poetry install --no-root --only=dev
 ```
 
-else run:
+Then, in order to build all the packages, run:
 
 ```sh
 poetry run python build_packages.py
 ```
 
-The package build script will build the required docker image and use it to
-build the wheels for all supported platforms, then builds the sdist. Once the
-build completes, the archives will be available in the `dist/` directory. The
-script will also cleanup the build artifacts and restore the submodules to
-their initial conditions.
+The package build script will restore the submodules to the committed
+revisions, then build the required docker images and use them to build the
+wheels for all supported platforms, then build the sdist. Once the build
+is complete, the generated files will be available in the `dist/` directory.
+Finally, the script will cleanup the build artifacts and restore the submodules
+to the committed revisions.
 
 ### Wheel tags
 
@@ -96,6 +87,18 @@ Special care is necessary for macosx wheels, as there
 successfully install it's important to tag them with the correct major version
 but use `0` as the minor version (e.g. `macosx-12.0-arm64` will install on OSX
 12.7 but `macosx-12.3-arm64` won't).
+
+## Submodule update
+
+Manual updates to submodules are overwritten during the build process, which
+resets all the submodules before and after the actual build process.
+
+For this reason, in order to have changes in submodules take effect at build
+time, they need to have been committed.
+
+The `cross` submodule (and its `docker/cross-toolchains` submodule) are set to
+the commits defined in the `build_packages.py` (`CROSS_COMMIT` and
+`CROSS_TOOLCHAIN_COMMIT`) by the build process.
 
 ## Format
 
@@ -167,3 +170,5 @@ pip install --index-url https://test.pypi.org/simple/ rgb-lib
 [packages]: #packages
 [platform compatibility tags]: https://packaging.python.org/en/latest/specifications/platform-compatibility-tags/
 [poetry]: https://github.com/python-poetry/poetry
+[rgb-lib-uniffi]: https://github.com/RGB-Tools/rgb-lib/tree/master/bindings/uniffi
+[rgb-lib]: https://github.com/RGB-Tools/rgb-lib
