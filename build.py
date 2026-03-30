@@ -114,6 +114,9 @@ def generate_bindings(platform):
         "release",
         lib_name,
     )
+    uniffi_toml_path = UNIFFI_DIR.joinpath(
+        "uniffi.toml",
+    )
     if not lib_path.exists():
         raise RuntimeError(f"lib path ({lib_path}) not found")
     run(
@@ -131,6 +134,8 @@ def generate_bindings(platform):
             "--language",
             "python",
             "--no-format",
+            "--config",
+            str(uniffi_toml_path),
         ],
         check=True,
     )
