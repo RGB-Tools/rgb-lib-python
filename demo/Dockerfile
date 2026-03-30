@@ -13,7 +13,7 @@ WORKDIR /home/$USER
 USER $USER
 
 RUN python3 -m pip install --no-cache-dir --no-warn-script-location \
-    jupyterlab matplotlib python-magic qrcode rgb-lib==0.3.0b4
+    jupyterlab matplotlib python-magic qrcode rgb-lib==0.3.0b5
 
 COPY --chown=$USER:$USER rgb-lib.ipynb sample.png ./
 
