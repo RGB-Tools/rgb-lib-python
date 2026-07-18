@@ -42,6 +42,8 @@ include = [
   # python package
   { path = "rgb_lib/*rgblibuniffi.*", format = "wheel" },
   { path = "rgb_lib/rgb_lib.py", format = "wheel" },
+  # bindings generation config (needed for source builds)
+  { path = "uniffi-config.toml", format = "sdist" },
   # cross
   { path = "cross/**/Cargo.*", format = "sdist" },
   { path = "cross/.cargo", format = "sdist" },
