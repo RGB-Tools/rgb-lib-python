@@ -1,0 +1,2 @@
+[defaults.bindings.python]
+cdylib_name = "rgblibuniffi"

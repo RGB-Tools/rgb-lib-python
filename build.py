@@ -11,6 +11,7 @@ PYTHON_LIB_DIR = Path("rgb_lib")
 UNIFFI_DIR = Path("rgb-lib/bindings/uniffi")
 MANIFEST_PATH = UNIFFI_DIR.joinpath("Cargo.toml")
 UDL_PATH = UNIFFI_DIR.joinpath("src", "rgb-lib.udl")
+UNIFFI_CONFIG_PATH = Path("uniffi-config.toml")
 OSX_VERSION = "12.3"
 
 # supported platforms metadata
@@ -107,15 +108,11 @@ def copy_rust_library(platform):
 def generate_bindings(platform):
     """Generate Python bindings using uniffi-bindgen."""
     target = PLATFORMS[platform]["target"]
-    lib_name = get_lib_name(platform)
     lib_path = UNIFFI_DIR.joinpath(
         "target",
         target,
         "release",
-        lib_name,
-    )
-    uniffi_toml_path = UNIFFI_DIR.joinpath(
-        "uniffi.toml",
+        get_lib_name(platform),
     )
     if not lib_path.exists():
         raise RuntimeError(f"lib path ({lib_path}) not found")
@@ -135,7 +132,7 @@ def generate_bindings(platform):
             "python",
             "--no-format",
             "--config",
-            str(uniffi_toml_path),
+            str(UNIFFI_CONFIG_PATH),
         ],
         check=True,
     )
