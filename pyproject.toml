@@ -16,13 +16,14 @@ classifiers = [
   "Operating System :: MacOS",
   "Operating System :: POSIX :: Linux",
   "Operating System :: Microsoft :: Windows",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
   "Topic :: Other/Nonlisted Topic",
 ]
-requires-python = "~=3.10"
+requires-python = "~=3.11"
 
 [project.urls]
 homepage = "https://github.com/RGB-Tools/rgb-lib-python"
@@ -95,4 +96,4 @@ setup-cross = "build_packages:reset_cross"
 
 [tool.black]
 line_length = 100
-target_version = ["py310", "py311", "py312", "py313"]
+target_version = ["py311", "py312", "py313", "py314", "py315"]
