@@ -1,0 +1,240 @@
+name: Build
+
+# SECURITY: the build job exposes the GitHub Actions runtime token (needed by
+# docker buildx to access the cache), which allows writing to the cache. Never
+# trigger this workflow on pull_request_target (or other events running
+# untrusted code with access to the base repository's secrets and cache), as a
+# pull request could then poison the cache used by master builds
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  PYTHON_VERSION: "3.13"
+
+jobs:
+  # all platforms are built on linux, using cross
+  build:
+    name: Build ${{ matrix.platform }} wheel
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - linux-x86_64
+          - linux-aarch64
+          - macosx-x86_64
+          - macosx-arm64
+          - win-amd64
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      # the cross images and the rust build artifacts need a lot of space
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          df -h /
+
+      - name: Setup python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Setup rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo registry and cross xtask build
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: cross
+          shared-key: cross-xtask
+          save-if: ${{ github.event_name != 'pull_request' }}
+
+      - name: Install cross
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cross
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Install build dependencies
+        run: poetry install --no-root --only=dev
+
+      # the cross images are built with a dedicated builder, as the default
+      # one can't export layers to the GitHub Actions cache. It is not made the
+      # default as cross needs the docker daemon one for pre-build images
+      - name: Setup docker buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v4
+        with:
+          use: false
+
+      # expose the runtime variables needed by buildx to access the cache.
+      # These include ACTIONS_RUNTIME_TOKEN, see the security note at the top
+      - name: Expose GitHub runtime
+        uses: crazy-max/ghaction-github-runtime@v4
+
+      - name: Setup cross
+        run: poetry run python -c 'import build_packages; build_packages.setup_cross()'
+
+      - name: Build the wheel
+        env:
+          # pull requests don't write to the cache, to limit its size and to
+          # prevent cache poisoning, as their code is not trusted
+          CROSS_IMAGE_BUILD_OPTS: >-
+            --builder ${{ steps.buildx.outputs.name }}
+            --cache-from type=gha,scope=cross-image-${{ matrix.platform }}
+            ${{ github.event_name != 'pull_request' && format('--cache-to type=gha,scope=cross-image-{0},mode=max,ignore-error=true', matrix.platform) || '' }}
+        run: |
+          poetry run python -c \
+            'import build_packages; build_packages.build_wheel("${{ matrix.platform }}")'
+
+      # the retagging leaves the originally tagged wheel in place, only the
+      # retagged one (the one that gets published) is uploaded
+      - name: Upload the wheel
+        uses: actions/upload-artifact@v7
+        with:
+          name: wheel-${{ matrix.platform }}
+          path: dist/*-py3-none-*.whl
+          if-no-files-found: error
+          retention-days: 7
+
+  # check the sdist is complete, as it's what source installations build from
+  sdist:
+    name: Build the source distribution
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Setup python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Setup rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      # the sdist ships the patched cross files, so cross is set up first
+      - name: Setup cross
+        run: python3 -c 'import build_packages; build_packages.setup_cross()'
+
+      - name: Build the sdist
+        run: poetry build --format sdist
+
+      # a source installation builds the rust library from the sdist contents,
+      # so all the required sources need to have been packaged
+      - name: Check the packaged rust sources build
+        run: |
+          mkdir -p "$RUNNER_TEMP/sdist"
+          tar xzf dist/*.tar.gz -C "$RUNNER_TEMP/sdist" --strip-components=1
+          cargo check --locked \
+            --manifest-path "$RUNNER_TEMP/sdist/rgb-lib/bindings/uniffi/Cargo.toml"
+
+      - name: Upload the sdist
+        uses: actions/upload-artifact@v7
+        with:
+          name: sdist
+          path: dist/*.tar.gz
+          if-no-files-found: error
+          retention-days: 7
+
+  # install each wheel on its platform and check the bindings load. The
+  # linux-x86_64 wheel is not here, as it's covered by the demo run
+  smoke-test:
+    name: Smoke test ${{ matrix.platform }}
+    needs: build
+    # run for the platforms that built even if others failed
+    if: ${{ !cancelled() }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { platform: linux-aarch64, runner: ubuntu-24.04-arm }
+          - { platform: macosx-x86_64, runner: macos-15-intel }
+          - { platform: macosx-arm64, runner: macos-15 }
+          - { platform: win-amd64, runner: windows-2025 }
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Download the wheel
+        uses: actions/download-artifact@v8
+        with:
+          name: wheel-${{ matrix.platform }}
+          path: dist
+
+      - name: Install the wheel
+        run: python -m pip install dist/*.whl
+
+      - name: Load the bindings and call them
+        run: python .github/scripts/smoke_test.py
+
+  # the regtest services need linux docker, so the demo only runs on
+  # linux-x86_64
+  demo:
+    name: Run the demo on regtest (linux-x86_64)
+    needs: build
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Download the wheel
+        uses: actions/download-artifact@v8
+        with:
+          name: wheel-linux-x86_64
+          path: demo/wheels
+
+      # the demo image is built with the wheel instead of the released package,
+      # then the notebook is executed unattended against the regtest services
+      - name: Run the demo notebook
+        working-directory: demo
+        env:
+          CELL_TIMEOUT: 900
+        run: |
+          wheel=$(ls wheels/*.whl)
+          echo "running the demo with $wheel"
+          RGB_LIB_SPEC="./$wheel" ./services.sh test
+
+      - name: Upload the executed notebook
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: executed-notebook
+          path: demo/rgb-lib-executed.ipynb
+          if-no-files-found: ignore
+          retention-days: 7

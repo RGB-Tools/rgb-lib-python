@@ -1,5 +1,7 @@
 **/.vim/
 **/__pycache__/
+/demo/rgb-lib-executed.ipynb
+/demo/wheels/*.whl
 /dist/
 /poetry.lock
 /rgb_lib/*rgblibuniffi.*

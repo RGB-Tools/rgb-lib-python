@@ -6,14 +6,50 @@ from os import environ, remove
 from pathlib import Path
 from re import sub
 from shutil import copy
-from subprocess import run
+from subprocess import DEVNULL, run
 from tomllib import load
 
 from build import OSX_VERSION, PLATFORMS, PYTHON_LIB_DIR, UNIFFI_DIR, get_lib_name
 
-CROSS_COMMIT = "43a1220"
-CROSS_TOOLCHAIN_COMMIT = "d139724"
+# full commit hashes, as fetching by short hash is not supported
+CROSS_COMMIT = "2870a0cef9308febf8b4b75a83542d9a3d319ffe"
+CROSS_TOOLCHAIN_COMMIT = "d139724ffa5d4bf5355e05eb9ada2b21cb2b9c44"
 OUTPUT_DIR = Path("dist")
+
+
+def build_wheel(platform):
+    """Build the wheel for the given platform."""
+    print(f"\n\n\n==== bulding wheel for platform {platform}")
+    environ["PLATFORM"] = platform
+    run(["poetry", "build", "--format", "wheel"], check=True)
+    retag_wheel(platform)
+
+
+def checkout_commit(commit, path):
+    """Checkout the given commit in the repository at the given path."""
+    # the commit can be missing (e.g. with shallow submodules, as in CI), in
+    # that case fetch it, keeping the clone shallow only if it already is
+    missing = run(
+        ["git", "cat-file", "-e", f"{commit}^{{commit}}"],
+        cwd=path,
+        check=False,
+        stdout=DEVNULL,
+        stderr=DEVNULL,
+    ).returncode
+    if missing:
+        shallow = run(
+            ["git", "rev-parse", "--is-shallow-repository"],
+            cwd=path,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+        args = ["git", "fetch"]
+        if shallow == "true":
+            args.extend(["--depth", "1"])
+        args.extend(["origin", commit])
+        run(args, cwd=path, check=True)
+    run(["git", "reset", "--hard", commit], cwd=path, check=True)
 
 
 def cleanup(platform):
@@ -54,10 +90,7 @@ def main():
     setup_cross()
     # build platform-specific wheels
     for platform in PLATFORMS:
-        print(f"\n\n\n==== bulding wheel for platform {platform}")
-        environ["PLATFORM"] = platform
-        run(["poetry", "build", "--format", "wheel"], check=True)
-        retag_wheel(platform)
+        build_wheel(platform)
         cleanup(platform)
     # build the platform-independent sdist
     print("\n\n\n==== bulding source distribution")
@@ -84,6 +117,13 @@ def patch_cross_files():
         (r"archive-key-{7.0,8,9,10,11}", r"archive-key-12"),
         (r"release-{7,8,9,10,11}", r"release-12"),
         (r"archive_{2020,2021,2022,2023,2024}", r"archive_2025"),
+    ]
+    patch_files(files, substitutions)
+    # patch qemu.sh to download from the kernel.org CDN, as the main site is
+    # not reachable from some networks (e.g. the GitHub Actions runners)
+    files = ["cross/docker/qemu.sh"]
+    substitutions = [
+        (r"https://(www\.)?kernel\.org/pub", r"https://cdn.kernel.org/pub"),
     ]
     patch_files(files, substitutions)
     # patch wine version for updated ubuntu
@@ -153,12 +193,8 @@ def retag_wheel(platform):
 def setup_cross():
     """Setup cross for cross-building."""
     reset_submodules()
-    run(["git", "reset", "--hard", CROSS_COMMIT], cwd="cross", check=True)
-    run(
-        ["git", "reset", "--hard", CROSS_TOOLCHAIN_COMMIT],
-        cwd="cross/docker/cross-toolchains",
-        check=True,
-    )
+    checkout_commit(CROSS_COMMIT, "cross")
+    checkout_commit(CROSS_TOOLCHAIN_COMMIT, "cross/docker/cross-toolchains")
     patch_cross_files()
     configure_cross()
 
