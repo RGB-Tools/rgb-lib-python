@@ -1,9 +1,9 @@
 services:
   bitcoind:
-    image: registry.gitlab.com/hashbeam/docker/bitcoind:30.0
+    image: registry.gitlab.com/hashbeam/docker/bitcoind:31.2
     command: "-fallbackfee=0.0002"
   electrs:
-    image: registry.gitlab.com/hashbeam/docker/electrs:0.10.10
+    image: registry.gitlab.com/hashbeam/docker/electrs:0.11.0
     depends_on:
       - bitcoind
   proxy:
