@@ -1,0 +1,45 @@
+name: Lint
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Install dev dependencies
+        run: poetry install --no-root --only=dev
+
+      - name: Check formatting
+        run: poetry run black --check --diff *.py demo/*.py
+
+      - name: Lint with flake8
+        run: poetry run flake8 *.py demo/*.py
+
+      - name: Lint with pylint
+        run: poetry run pylint *.py demo/*.py
+
+      - name: Shellcheck
+        run: shellcheck demo/services.sh

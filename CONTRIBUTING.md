@@ -72,6 +72,14 @@ is complete, the generated files will be available in the `dist/` directory.
 Finally, the script will cleanup the build artifacts and restore the submodules
 to the committed revisions.
 
+To build the wheel for a single platform (e.g. to test a change without
+building all of them), run:
+
+```sh
+poetry run python -c 'import build_packages; build_packages.setup_cross()'
+poetry run python -c 'import build_packages; build_packages.build_wheel("linux-x86_64")'
+```
+
 ### Wheel tags
 
 The `build.py` script contains the wheel tags associated to the supported
@@ -105,7 +113,7 @@ the commits defined in the `build_packages.py` (`CROSS_COMMIT` and
 To format the code of the build scripts, from the project root run:
 
 ```sh
-poetry run black *.py
+poetry run black *.py demo/*.py
 ```
 
 ## Lint
@@ -113,9 +121,32 @@ poetry run black *.py
 To lint the code of the build scripts, from the project root run:
 
 ```sh
-poetry run flake8 *.py
-poetry run pylint *.py
+poetry run flake8 *.py demo/*.py
+poetry run pylint *.py demo/*.py
 ```
+
+## Continuous integration
+
+The `Build` workflow (`.github/workflows/build.yml`) checks the project still
+builds and works, which is especially useful after an update of the `rgb-lib`
+submodule. It:
+
+- builds the wheel for each supported platform, with the same build system used
+  for releases, and uploads them as artifacts
+- builds the sdist and checks the packaged rust sources build, as source
+  installations are built from them (so a new file in rgb-lib that's not
+  matched by the `include` list in `pyproject.toml` fails the build)
+- installs each wheel on its platform and checks the bindings load and work
+  (see `.github/scripts/smoke_test.py`)
+- runs the [demo] notebook unattended, against regtest services and using the
+  freshly built linux wheel, so an API change that breaks the demo is caught
+
+Building the docker images used to cross-build the native library takes a long
+time, so their layers are cached. Pull requests use the cache but don't write
+to it, to avoid poisoning the one used by master builds.
+
+The `Lint` workflow (`.github/workflows/lint.yml`) runs the [format] and [lint]
+checks for the python scripts, plus `shellcheck` for `demo/services.sh`.
 
 ## Publish
 
@@ -166,7 +197,10 @@ pip install --index-url https://test.pypi.org/simple/ rgb-lib
 
 [cargo]: https://github.com/rust-lang/cargo
 [cross]: https://github.com/cross-rs/cross
+[demo]: demo/README.md
 [docker]: https://docs.docker.com/engine/install/
+[format]: #format
+[lint]: #lint
 [packages]: #packages
 [platform compatibility tags]: https://packaging.python.org/en/latest/specifications/platform-compatibility-tags/
 [poetry]: https://github.com/python-poetry/poetry

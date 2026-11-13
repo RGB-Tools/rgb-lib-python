@@ -16,6 +16,14 @@ CROSS_TOOLCHAIN_COMMIT = "d139724"
 OUTPUT_DIR = Path("dist")
 
 
+def build_wheel(platform):
+    """Build the wheel for the given platform."""
+    print(f"\n\n\n==== bulding wheel for platform {platform}")
+    environ["PLATFORM"] = platform
+    run(["poetry", "build", "--format", "wheel"], check=True)
+    retag_wheel(platform)
+
+
 def cleanup(platform):
     """Cleanup the build artifacts for the given platform."""
     print("Cleaning up build artifacts")
@@ -54,10 +62,7 @@ def main():
     setup_cross()
     # build platform-specific wheels
     for platform in PLATFORMS:
-        print(f"\n\n\n==== bulding wheel for platform {platform}")
-        environ["PLATFORM"] = platform
-        run(["poetry", "build", "--format", "wheel"], check=True)
-        retag_wheel(platform)
+        build_wheel(platform)
         cleanup(platform)
     # build the platform-independent sdist
     print("\n\n\n==== bulding source distribution")
