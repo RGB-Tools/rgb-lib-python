@@ -119,6 +119,13 @@ def patch_cross_files():
         (r"archive_{2020,2021,2022,2023,2024}", r"archive_2025"),
     ]
     patch_files(files, substitutions)
+    # patch qemu.sh to download from the kernel.org CDN, as the main site is
+    # not reachable from some networks (e.g. the GitHub Actions runners)
+    files = ["cross/docker/qemu.sh"]
+    substitutions = [
+        (r"https://(www\.)?kernel\.org/pub", r"https://cdn.kernel.org/pub"),
+    ]
+    patch_files(files, substitutions)
     # patch wine version for updated ubuntu
     files = ["cross/docker/wine.sh"]
     substitutions = [
