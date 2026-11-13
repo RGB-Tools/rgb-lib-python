@@ -1,6 +1,6 @@
 """Module to build the native library and the bindings."""
 
-from os import getenv
+from os import environ, getenv
 from pathlib import Path
 from platform import machine
 from shutil import copy
@@ -76,7 +76,7 @@ def build_docker_image(platform):
             f"{OSX_VERSION}/MacOSX{OSX_VERSION}.sdk.tar.xz"
         )
         args.extend(["--build-arg", f"MACOS_SDK_URL={mac_sdk_url}"])
-    run(args, cwd="cross", check=True)
+    run(args, cwd="cross", check=True, env=get_image_build_env())
 
 
 def build_rust_library(platform):
@@ -145,6 +145,21 @@ def get_current_platform():
         arch = machine()
         platform = f"macosx-{arch}"
     return platform
+
+
+def get_image_build_env():
+    """Get the environment for the docker image build."""
+    env = environ.copy()
+    # the cross xtask derives image tags from GITHUB_REF_*, failing on some
+    # refs (e.g. tags) even if --tag is passed
+    for var in ["GITHUB_REF_TYPE", "GITHUB_REF_NAME"]:
+        env.pop(var, None)
+    # extra docker build options (e.g. for layer caching in CI) are only
+    # applied to the image build, as cross also uses CROSS_BUILD_OPTS itself
+    image_build_opts = env.pop("CROSS_IMAGE_BUILD_OPTS", None)
+    if image_build_opts:
+        env["CROSS_BUILD_OPTS"] = image_build_opts
+    return env
 
 
 def get_lib_name(platform):
