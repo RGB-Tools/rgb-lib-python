@@ -2,10 +2,18 @@ services:
   bitcoind:
     image: registry.gitlab.com/hashbeam/docker/bitcoind:31.2
     command: "-fallbackfee=0.0002"
+    # the image healthcheck calls bitcoin-cli, check it often so services
+    # depending on bitcoind are not held back
+    healthcheck:
+      interval: 2s
+      timeout: 10s
+      retries: 30
   electrs:
     image: registry.gitlab.com/hashbeam/docker/electrs:0.11.0
+    # electrs exits if bitcoind is not accepting RPC connections yet
     depends_on:
-      - bitcoind
+      bitcoind:
+        condition: service_healthy
   proxy:
     image: ghcr.io/rgb-tools/rgb-proxy-server:0.3.0
     ports:
